@@ -1,6 +1,5 @@
 import java.io.*;
-import java.util.*;
-import java.util.regex.Matcher;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 public class UniqApp {
@@ -14,7 +13,7 @@ public class UniqApp {
     private static boolean inputFile = false;
     private static String inputFileS = "";
 
-    private static void starter(String[] input) throws IOException {
+    public static void starter(String[] input) throws IOException {
         Pattern pattern = Pattern.compile(
                 "(-i)?\\s?(-u)?\\s?(-c)?\\s?(-s \\d+)?\\s?(-o \\w+)?\\s?(\\w+)?");
         if (!Pattern.matches(String.valueOf(pattern), String.join(" ", input))) {
@@ -32,9 +31,19 @@ public class UniqApp {
         BufferedReader bR = fR != null ? new BufferedReader(fR): null;
         uniqBase(bW,bR);
         if(bW!=null) bW.close();
+        if(bR!=null) bR.close();
+        register = false;
+        uniq = false;
+        repeatNum = false;
+        ignoreIntb = false;
+        ignoreInt = 0;
+        outputFile = false;
+        outputFileS = "";
+        inputFile = false;
+        inputFileS = "";
     }
 
-    public static void flags(String inputF) throws IOException {
+    public static void flags(String inputF) {
         switch (inputF) {
             case "-i": register = true;
                 break;
@@ -48,13 +57,11 @@ public class UniqApp {
                 break;
         }
         Pattern p = Pattern.compile("\\d+");
-        Matcher m = p.matcher(inputF);
-        if (m.find() && ignoreIntb) {
+        if (Pattern.matches(String.valueOf(p), inputF) && ignoreIntb) {
             ignoreInt = Integer.parseInt(inputF);
         }
-        Pattern p2 = Pattern.compile("(\\w\\D)+");
-        Matcher m2 = p2.matcher(inputF);
-        while (m2.find()){
+        Pattern p2 = Pattern.compile("\\w+");
+        if (Pattern.matches(String.valueOf(p2), inputF)){
             if (!outputFile){
                 inputFileS = inputF;
                 inputFile = true;
@@ -97,7 +104,7 @@ public class UniqApp {
                 if (line1.substring(ignore).equals(line2.substring(ignore))) count += 1;
                 else {
                     if (!uniq || count == 1) {
-                        if (repeatNum) writer(bW1, !outputFileS.isEmpty(), count + " " + line2);
+                        if (repeatNum && !line2.isEmpty()) writer(bW1, !outputFileS.isEmpty(), count + " " + line2);
                         else writer(bW1, !outputFileS.isEmpty(), line2);
                     }
                     count = 1;
