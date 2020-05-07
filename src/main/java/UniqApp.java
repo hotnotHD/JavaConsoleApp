@@ -4,10 +4,11 @@ public class UniqApp {
 
     public static void starter(String[] input) throws IOException {
         FlagCont gg = new FlagCont();
-        try{
-        for (String i: input){
-            flags(i, gg);
-        } } catch (IllegalArgumentException e){
+        try {
+            for (String i : input) {
+                flags(i, gg);
+            }
+        } catch (IllegalArgumentException e) {
             System.out.println("Invalid input of arguments");
         }
         try {
@@ -20,39 +21,44 @@ public class UniqApp {
             uniqBase(bW, bR, gg);
             bW.close();
             bR.close();
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             System.out.println("File Not Found");
         }
     }
 
     public static void flags(String inputF, FlagCont gg) {
         switch (inputF) {
-            case "-i": gg.register = true;
+            case "-i":
+                gg.register = true;
                 return;
-            case "-u": gg.uniq = true;
+            case "-u":
+                gg.uniq = true;
                 return;
-            case "-c": gg.repeatNum = true;
+            case "-c":
+                gg.repeatNum = true;
                 return;
-            case "-s": gg.ignoreIntb = true;
+            case "-s":
+                gg.ignoreIntb = true;
                 return;
-            case "-o": gg.outputFile = true;
+            case "-o":
+                gg.outputFile = true;
                 return;
         }
         if (gg.ignoreIntb) {
             try {
                 gg.ignoreInt = Integer.parseInt(inputF);
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 System.out.println("Wrong input");
             }
             gg.ignoreIntb = false;
             return;
         }
-        if (gg.outputFile){
+        if (gg.outputFile) {
             gg.outputFileS = inputF;
             gg.outputFile = false;
             return;
         }
-        if(inputF.charAt(0) != '-') {
+        if (inputF.charAt(0) != '-') {
             gg.inputFileS = inputF;
             return;
         }
@@ -69,12 +75,12 @@ public class UniqApp {
             skip = true;
             line1 = null;
         }
-        while (lastString){
+        while (lastString) {
             if (line1 == null) {
                 line1 = " ";
                 lastString = false;
             } else line1 = reader(bR);
-            if(!skip && line1 !=null) {
+            if (!skip && line1 != null) {
                 if (gg.register) {
                     line1 = line1.toLowerCase();
                     line2 = line2.toLowerCase();
@@ -99,14 +105,14 @@ public class UniqApp {
     }
 
     private static void writer(BufferedWriter bW, String line) throws IOException {
-            bW.write(line);
-            bW.newLine();
+        bW.write(line);
+        bW.newLine();
     }
 
-    private static String  reader (BufferedReader bR) throws IOException {
+    private static String reader(BufferedReader bR) throws IOException {
         String read = bR.readLine();
-        if ( read == null || read.equals("-e")) return null;
-            else return read;
+        if (read == null || read.equals("-e")) return null;
+        else return read;
     }
 
     public static void main(String[] args) throws IOException {
