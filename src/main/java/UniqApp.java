@@ -3,22 +3,22 @@ import java.io.*;
 public class UniqApp {
 
     public static void starter(String[] input) throws IOException {
-        FlagCont gg = new FlagCont();
+        FlagCont flags = new FlagCont();
         try {
             for (String i : input) {
-                flags(i, gg);
+                flags(i, flags);
             }
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid input of arguments");
         }
         try {
-            File file = !gg.outputFileS.isEmpty() ? new File(gg.outputFileS) : null;
+            File file = !flags.outputFileS.isEmpty() ? new File(flags.outputFileS) : null;
             FileWriter fW = file != null ? new FileWriter(file) : null;
             BufferedWriter bW = fW != null ? new BufferedWriter(fW) : new BufferedWriter(new OutputStreamWriter(System.out));
-            File file2 = !gg.inputFileS.isEmpty() ? new File(gg.inputFileS) : null;
+            File file2 = !flags.inputFileS.isEmpty() ? new File(flags.inputFileS) : null;
             FileReader fR = file2 != null ? new FileReader(file2) : null;
             BufferedReader bR = fR != null ? new BufferedReader(fR) : new BufferedReader(new InputStreamReader(System.in));
-            uniqBase(bW, bR, gg);
+            uniqBase(bW, bR, flags);
             bW.close();
             bR.close();
         } catch (FileNotFoundException e) {
@@ -26,46 +26,46 @@ public class UniqApp {
         }
     }
 
-    public static void flags(String inputF, FlagCont gg) {
+    public static void flags(String inputF, FlagCont flags) {
         switch (inputF) {
             case "-i":
-                gg.register = true;
+                flags.register = true;
                 return;
             case "-u":
-                gg.uniq = true;
+                flags.uniq = true;
                 return;
             case "-c":
-                gg.repeatNum = true;
+                flags.repeatNum = true;
                 return;
             case "-s":
-                gg.ignoreIntb = true;
+                flags.ignoreIntb = true;
                 return;
             case "-o":
-                gg.outputFile = true;
+                flags.outputFile = true;
                 return;
         }
-        if (gg.ignoreIntb) {
+        if (flags.ignoreIntb) {
             try {
-                gg.ignoreInt = Integer.parseInt(inputF);
+                flags.ignoreInt = Integer.parseInt(inputF);
             } catch (NumberFormatException e) {
                 System.out.println("Wrong input");
             }
-            gg.ignoreIntb = false;
+            flags.ignoreIntb = false;
             return;
         }
-        if (gg.outputFile) {
-            gg.outputFileS = inputF;
-            gg.outputFile = false;
+        if (flags.outputFile) {
+            flags.outputFileS = inputF;
+            flags.outputFile = false;
             return;
         }
         if (inputF.charAt(0) != '-') {
-            gg.inputFileS = inputF;
+            flags.inputFileS = inputF;
             return;
         }
         throw new IllegalArgumentException();
     }
 
-    private static void uniqBase(BufferedWriter bW, BufferedReader bR, FlagCont gg) throws IOException {
+    private static void uniqBase(BufferedWriter bW, BufferedReader bR, FlagCont flags) throws IOException {
         boolean skip = false;
         boolean lastString = true;
         int count = 1;
@@ -81,20 +81,20 @@ public class UniqApp {
                 lastString = false;
             } else line1 = reader(bR);
             if (!skip && line1 != null) {
-                if (gg.register) {
+                if (flags.register) {
                     line1 = line1.toLowerCase();
                     line2 = line2.toLowerCase();
                 }
                 int b = line1.length();
                 int a = line2.length();
-                int ignore = gg.ignoreInt;
+                int ignore = flags.ignoreInt;
                 if (ignore > b || ignore > a) {
                     ignore = Math.min(a, b);
                 }
                 if (line1.substring(ignore).equals(line2.substring(ignore))) count += 1;
                 else {
-                    if (!gg.uniq || count == 1) {
-                        if (gg.repeatNum && !line2.isEmpty()) writer(bW, count + " " + line2);
+                    if (!flags.uniq || count == 1) {
+                        if (flags.repeatNum && !line2.isEmpty()) writer(bW, count + " " + line2);
                         else writer(bW, line2);
                     }
                     count = 1;
